@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
       title: '당근마켓 클론',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        primaryColor: Colors.black,
         primarySwatch: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
