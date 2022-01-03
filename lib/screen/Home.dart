@@ -275,7 +275,12 @@ class _HomeState extends State<Home> {
     return BottomNavigationBarItem(
       icon: Padding(
         padding: const EdgeInsets.only(bottom: 7),
-        child: SvgPicture.asset("assets/svg/${iconName}_off.svg", width: 21),
+        child: SvgPicture.asset("assets/svg/${iconName}_off.svg", width: 22),
+      ),
+      // 선택된 네비게이션 아이콘 fas(색칠)로 변환할 수 있게
+      activeIcon: Padding(
+        padding: const EdgeInsets.only(bottom: 7),
+        child: SvgPicture.asset("assets/svg/${iconName}_on.svg", width: 22),
       ),
       label: label,
     );
