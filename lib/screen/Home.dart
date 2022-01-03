@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/src/material/bottom_navigation_bar.dart';
+import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -90,6 +91,12 @@ class _HomeState extends State<Home> {
     ];
   }
 
+  final oCcy = new NumberFormat("#,###", "ko_KR");
+  // 금액을 원 단위로, 1000씩 끊어서 보이게끔
+  String priceStringToWon(String priceString) {
+    return "${oCcy.format(int.parse(priceString))}원";
+  }
+
   // 빌드 위젯
   @override
   Widget build(BuildContext context) {
@@ -148,7 +155,7 @@ class _HomeState extends State<Home> {
         String imageUrl = datas[index]["image"]!;
         String titleUrl = datas[index]["title"]!;
         String locationUrl = datas[index]["location"]!;
-        String priceUrl = datas[index]["price"]!;
+        String priceUrl = priceStringToWon(datas[index]["price"]!);
         String likesUrl = datas[index]["likes"]!;
 
         return Container(
@@ -192,7 +199,7 @@ class _HomeState extends State<Home> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        '$priceUrl원',
+                        priceUrl,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w500),
                       ),
