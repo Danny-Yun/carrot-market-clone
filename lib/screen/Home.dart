@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/src/material/bottom_navigation_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
   List<Map<String, String>> datas = [];
-  late int _currentPageIndex;
 
   @override
   void initState() {
     super.initState();
-    _currentPageIndex = 0;
     datas = [
       {
         "image": "assets/images/ara-1.jpg",
@@ -103,7 +101,6 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: _appbar(),
       body: _body(),
-      bottomNavigationBar: _bnb(),
     );
   }
 
@@ -244,45 +241,6 @@ class _HomeState extends State<Home> {
         );
       },
       itemCount: 10,
-    );
-  }
-
-  // 네비게이션바 위젯
-  Widget _bnb() {
-    return BottomNavigationBar(
-      // 애니메이션 효과 제거
-      type: BottomNavigationBarType.fixed,
-      // 선택시 글자가 안커지게 고정
-      selectedFontSize: 12,
-      onTap: (int index) {
-        setState(() {
-          _currentPageIndex = index;
-        });
-      },
-      currentIndex: _currentPageIndex,
-      items: [
-        _bottomNavigationBarItem('home', '홈'),
-        _bottomNavigationBarItem('notes', '동네생활'),
-        _bottomNavigationBarItem('location', '내 근처'),
-        _bottomNavigationBarItem('chat', '채팅'),
-        _bottomNavigationBarItem('user', '나의 당근'),
-      ],
-    );
-  }
-
-  BottomNavigationBarItem _bottomNavigationBarItem(
-      String iconName, String label) {
-    return BottomNavigationBarItem(
-      icon: Padding(
-        padding: const EdgeInsets.only(bottom: 7),
-        child: SvgPicture.asset("assets/svg/${iconName}_off.svg", width: 22),
-      ),
-      // 선택된 네비게이션 아이콘 fas(색칠)로 변환할 수 있게
-      activeIcon: Padding(
-        padding: const EdgeInsets.only(bottom: 7),
-        child: SvgPicture.asset("assets/svg/${iconName}_on.svg", width: 22),
-      ),
-      label: label,
     );
   }
 }
