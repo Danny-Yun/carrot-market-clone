@@ -11,6 +11,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Map<String, String>> datas = [];
+  String currentLocation = 'bansong';
+  final Map<String, String> locationTypeToString = {
+    "bansong": "반송동",
+    "osan": "오산동",
+    "seokwoo": "석우동",
+  };
 
   @override
   void initState() {
@@ -113,14 +119,40 @@ class _HomeState extends State<Home> {
         onTap: () {
           print("location click");
         },
-        child: Row(
-          children: [
-            Text(
-              '반송동',
-              style: TextStyle(color: Colors.black87),
-            ),
-            Icon(Icons.arrow_drop_down, color: Colors.black),
-          ],
+        child: PopupMenuButton<String>(
+          // 사용자가 선택했을 때
+          onSelected: (String where) {
+            print(where);
+            setState(() {
+              currentLocation = where;
+              locationTypeToString[currentLocation];
+            });
+          },
+          // select 지역 리스트 생성
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem(value: "bansong", child: Text("반송동")),
+              PopupMenuItem(value: "osan", child: Text("오산동")),
+              PopupMenuItem(value: "seokwoo", child: Text("석우동")),
+            ];
+          },
+          shape: ShapeBorder.lerp(
+            // select 리스트의 모양을 둥글게
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            1,
+          ),
+          // select 리스트의 위치를 이동
+          offset: Offset(-10, 30),
+          child: Row(
+            children: [
+              Text(
+                '${locationTypeToString[currentLocation]}',
+                style: TextStyle(color: Colors.black87),
+              ),
+              Icon(Icons.arrow_drop_down, color: Colors.black),
+            ],
+          ),
         ),
       ),
       actions: [
