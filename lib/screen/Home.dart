@@ -1,4 +1,5 @@
 import 'package:carrot_market_clone/repository/ContentsRepository.dart';
+import 'package:carrot_market_clone/screen/Detail.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -137,6 +138,7 @@ class _HomeState extends State<Home> {
     );
   }
 
+  // 데이터 리스트
   _dataList(List<Map<String, String>> datas) {
     // print(datas);
     if (datas.isEmpty == true) {
@@ -150,78 +152,92 @@ class _HomeState extends State<Home> {
         String priceUrl = priceStringToWon(datas[index]["price"]!);
         String likesUrl = datas[index]["likes"]!;
 
-        return Container(
-          padding: EdgeInsets.all(13),
-          child: Row(
-            children: [
-              // Clipper - 깎는 도구로서 특정 위젯(주로 이미지)을 원하는 형태로 만든다.
-              ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                child: Image.asset(
-                  imageUrl,
-                  height: 120,
-                  width: 120,
-                ),
-              ),
-              // 영역을 꽉 채워주고 싶을땐 Expanded 위젯으로 감싸서 활용
-              // 단 아래  height:120 처럼 팽창시킬 기준을 정해줘야 한다.
-              Expanded(
-                // 텍스트 컨테이너
-                child: Container(
-                  margin: EdgeInsets.only(left: 10),
-                  height: 120,
-                  // color: Colors.red,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 13.0),
-                        child: Text(
-                          titleUrl,
-                          style: TextStyle(fontSize: 19),
-                          // 글자 수가 초과되면 ... 으로 처리
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        locationUrl,
-                        style: TextStyle(
-                            fontSize: 15, color: Colors.black.withOpacity(0.4)),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        priceUrl,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      Expanded(
-                        child: Container(
-                          // color: Colors.blue,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SvgPicture.asset(
-                                "assets/svg/heart_off.svg",
-                                width: 15,
-                                height: 15,
-                                color: Colors.red,
-                              ),
-                              SizedBox(width: 3),
-                              Text(
-                                likesUrl,
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+        return GestureDetector(
+          onTap: () {
+            print(datas[index]["title"]);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+              return DetailContentView(datas[index]);
+            }));
+          },
+          child: Container(
+            padding: EdgeInsets.all(13),
+            child: Row(
+              children: [
+                // Clipper - 깎는 도구로서 특정 위젯(주로 이미지)을 원하는 형태로 만든다.
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  // Hero위젯을 이용해서 페이지 이동시 애니메이션 효과 적용
+                  child: Hero(
+                    tag: datas[index]["cid"]!,
+                    child: Image.asset(
+                      imageUrl,
+                      height: 120,
+                      width: 120,
+                    ),
                   ),
                 ),
-              ),
-            ],
+                // 영역을 꽉 채워주고 싶을땐 Expanded 위젯으로 감싸서 활용
+                // 단 아래  height:120 처럼 팽창시킬 기준을 정해줘야 한다.
+                Expanded(
+                  // 텍스트 컨테이너
+                  child: Container(
+                    margin: EdgeInsets.only(left: 10),
+                    height: 120,
+                    // color: Colors.red,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 13.0),
+                          child: Text(
+                            titleUrl,
+                            style: TextStyle(fontSize: 19),
+                            // 글자 수가 초과되면 ... 으로 처리
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          locationUrl,
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.black.withOpacity(0.4)),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          priceUrl,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        Expanded(
+                          child: Container(
+                            // color: Colors.blue,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/svg/heart_off.svg",
+                                  width: 15,
+                                  height: 15,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(width: 3),
+                                Text(
+                                  likesUrl,
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
