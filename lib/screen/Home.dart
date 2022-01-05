@@ -1,3 +1,4 @@
+import 'package:carrot_market_clone/repository/ContentsRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,8 +11,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List<Map<String, String>> datas = [];
   String currentLocation = 'bansong';
+  late ContentsRepository contentsRepository;
+
   final Map<String, String> locationTypeToString = {
     "bansong": "반송동",
     "osan": "오산동",
@@ -21,83 +23,20 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    datas = [
-      {
-        "image": "assets/images/ara-1.jpg",
-        "title": "네메시스 축구화 275",
-        "location": "경기 화성시 반송동",
-        "price": "30000",
-        "likes": "2"
-      },
-      {
-        "image": "assets/images/ara-2.jpg",
-        "title": "LA갈비 5kg 팔아요~",
-        "location": "경기 화성시 반송동",
-        "price": "100000",
-        "likes": "6"
-      },
-      {
-        "image": "assets/images/ara-3.jpg",
-        "title": "치약 팝니다",
-        "location": "경기 화성시 반송동",
-        "price": "5000",
-        "likes": "0"
-      },
-      {
-        "image": "assets/images/ara-4.jpg",
-        "title": "맥북프로16인치 터치바 스페이스그레이",
-        "location": "경기 화성시 반송동",
-        "price": "2500000",
-        "likes": "3"
-      },
-      {
-        "image": "assets/images/ara-5.jpg",
-        "title": "디월트존기임팩",
-        "location": "경기 화성시 반송동",
-        "price": "150000",
-        "likes": "1"
-      },
-      {
-        "image": "assets/images/ara-6.jpg",
-        "title": "갤럭시S10",
-        "location": "경기 화성시 반송동",
-        "price": "270000",
-        "likes": "4"
-      },
-      {
-        "image": "assets/images/ara-7.jpg",
-        "title": "선반",
-        "location": "경기 화성시 반송동",
-        "price": "15000",
-        "likes": "2"
-      },
-      {
-        "image": "assets/images/ara-8.jpg",
-        "title": "냉장 쇼케이스",
-        "location": "경기 화성시 반송동",
-        "price": "80000",
-        "likes": "1"
-      },
-      {
-        "image": "assets/images/ara-9.jpg",
-        "title": "미니 냉장고",
-        "location": "경기 화성시 반송동",
-        "price": "30000",
-        "likes": "3"
-      },
-      {
-        "image": "assets/images/ara-10.jpg",
-        "title": "멜킨스 풀업 턱걸이 판매합니다",
-        "location": "경기 화성시 반송동",
-        "price": "50000",
-        "likes": "10"
-      },
-    ];
+    // currentLocation = 'bansong';
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    contentsRepository = ContentsRepository();
   }
 
   final oCcy = new NumberFormat("#,###", "ko_KR");
   // 금액을 원 단위로, 1000씩 끊어서 보이게끔
   String priceStringToWon(String priceString) {
+    // 무료나눔일 경우 변환하지 않고 리턴
+    if (priceString == "무료나눔") return priceString;
     return "${oCcy.format(int.parse(priceString))}원";
   }
 
@@ -177,8 +116,32 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _loadContents() {
+    return contentsRepository.loadContentsFromLocation(currentLocation);
+  }
+
   // 바디 위젯
   Widget _body() {
+    return FutureBuilder(
+      future: _loadContents(),
+      builder: (context, dynamic snapshot) {
+        // 데이터가 호출될때까지 인디케이터 띄우기
+        if (snapshot.connectionState != ConnectionState.done) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text("데이터 오류"));
+        }
+        return _dataList(snapshot.data);
+      },
+    );
+  }
+
+  _dataList(List<Map<String, String>> datas) {
+    // print(datas);
+    if (datas.isEmpty == true) {
+      return Center(child: Text("해당 지역은 요청하신 정보가 존재하지 않습니다."));
+    }
     return ListView.separated(
       itemBuilder: (context, index) {
         String imageUrl = datas[index]["image"]!;
