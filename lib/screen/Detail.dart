@@ -15,8 +15,34 @@ class DetailContentView extends StatefulWidget {
   _DetailContentViewState createState() => _DetailContentViewState();
 }
 
-class _DetailContentViewState extends State<DetailContentView> {
+class _DetailContentViewState extends State<DetailContentView>
+    with SingleTickerProviderStateMixin {
   Size? size;
+  double scrollpositionToAlpha = 0;
+  ScrollController _controller = ScrollController();
+
+  AnimationController? _animationController;
+  Animation? _colorTween;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(vsync: this);
+    _colorTween = ColorTween(begin: Colors.white, end: Colors.black)
+        .animate(_animationController!);
+    // 스크롤이 움직일 때마다 실행하는 함수
+    _controller.addListener(() {
+      // print(_controller.offset);
+      setState(() {
+        if (_controller.offset > 255) {
+          scrollpositionToAlpha = 255;
+        } else {
+          scrollpositionToAlpha = _controller.offset;
+        }
+        _animationController?.value = scrollpositionToAlpha / 255;
+      });
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -45,28 +71,33 @@ class _DetailContentViewState extends State<DetailContentView> {
     );
   }
 
+  // 애니메이션이 적용되는 아이콘 만들기 (스크롤 내릴떄 검은색으로 변하는)
+  Widget _makeIcon(IconData icon) {
+    return AnimatedBuilder(
+        animation: _colorTween!,
+        builder: (context, child) => Icon(icon, color: _colorTween?.value));
+  }
+
   // 앱바
   PreferredSizeWidget _appbar() {
     return AppBar(
       // 앱바 배경이 사라지게
-      backgroundColor: Colors.white.withAlpha(0),
+      backgroundColor: Colors.white.withAlpha(scrollpositionToAlpha.toInt()),
       elevation: 0,
       leading: IconButton(
         onPressed: () {
           Navigator.pop(context);
         },
-        icon: Icon(Icons.arrow_back),
+        icon: _makeIcon(Icons.arrow_back),
       ),
       actions: [
         IconButton(
           onPressed: () {},
-          icon: Icon(Icons.share),
-          color: Colors.white,
+          icon: _makeIcon(Icons.share),
         ),
         IconButton(
           onPressed: () {},
-          icon: Icon(Icons.more_vert),
-          color: Colors.white,
+          icon: _makeIcon(Icons.more_vert),
         ),
       ],
     );
@@ -74,7 +105,7 @@ class _DetailContentViewState extends State<DetailContentView> {
 
   // 바디
   Widget _body() {
-    return CustomScrollView(slivers: [
+    return CustomScrollView(controller: _controller, slivers: [
       SliverList(
           delegate: SliverChildListDelegate(
         [
