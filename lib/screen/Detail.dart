@@ -24,6 +24,8 @@ class _DetailContentViewState extends State<DetailContentView>
   AnimationController? _animationController;
   Animation? _colorTween;
 
+  bool isMyFavoriteContent = false;
+
   @override
   void initState() {
     super.initState();
@@ -285,11 +287,19 @@ class _DetailContentViewState extends State<DetailContentView>
           Row(
             children: [
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  setState(() {
+                    // false일 때는 true, true일 때는 false로
+                    isMyFavoriteContent = !isMyFavoriteContent;
+                  });
+                },
                 child: SvgPicture.asset(
-                  "assets/svg/heart_off.svg",
+                  isMyFavoriteContent
+                      ? "assets/svg/heart_on.svg"
+                      : "assets/svg/heart_off.svg",
                   width: 24,
                   height: 24,
+                  color: Color(0xfff08f4f),
                 ),
               ),
               SizedBox(width: 15),
